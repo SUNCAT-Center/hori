@@ -1,0 +1,55 @@
+(dp0
+S'path'
+p1
+S'/home/camp/anpet/20091105_adsorbate_vibrations/kpts-441/CH2/Cu'
+p2
+sS'remark'
+p3
+S'Made simply by doubling the vibrations from CH2'
+p4
+sS'vibrations'
+p5
+cnumpy.core.multiarray
+_reconstruct
+p6
+(cnumpy
+ndarray
+p7
+(I0
+tp8
+S'b'
+p9
+tp10
+Rp11
+(I1
+(I18
+tp12
+cnumpy
+dtype
+p13
+(S'c16'
+p14
+I0
+I1
+tp15
+Rp16
+(I3
+S'<'
+p17
+NNNI-1
+I-1
+I0
+tp18
+bI00
+S'\x1a\xf1\xa9\xdbU3\x91?\x00\x00\x00\x00\x00\x00\x00\x00\x1a\xf1\xa9\xdbU3\x91?\x00\x00\x00\x00\x00\x00\x00\x00\xfb-8d\xb5{\xa5?\x00\x00\x00\x00\x00\x00\x00\x00\xfb-8d\xb5{\xa5?\x00\x00\x00\x00\x00\x00\x00\x001\x91\x9b\xf0 G\xa9?\x00\x00\x00\x00\x00\x00\x00\x001\x91\x9b\xf0 G\xa9?\x00\x00\x00\x00\x00\x00\x00\x00mYcwB\x90\xab?\x00\x00\x00\x00\x00\x00\x00\x00mYcwB\x90\xab?\x00\x00\x00\x00\x00\x00\x00\x00\xa2,\xd7\xfa\xc0(\xaf?\x00\x00\x00\x00\x00\x00\x00\x00\xa2,\xd7\xfa\xc0(\xaf?\x00\x00\x00\x00\x00\x00\x00\x009^\xac\xaa\xe1+\xb5?\x00\x00\x00\x00\x00\x00\x00\x009^\xac\xaa\xe1+\xb5?\x00\x00\x00\x00\x00\x00\x00\x00o\xde\x1f\xb7~\xd5\xc4?\x00\x00\x00\x00\x00\x00\x00\x00o\xde\x1f\xb7~\xd5\xc4?\x00\x00\x00\x00\x00\x00\x00\x00\xc3\x9a\x9f\x7f|\x95\xd7?\x00\x00\x00\x00\x00\x00\x00\x00\xc3\x9a\x9f\x7f|\x95\xd7?\x00\x00\x00\x00\x00\x00\x00\x00\xbf\x12\x00\x15\xe1)\xd8?\x00\x00\x00\x00\x00\x00\x00\x00\xbf\x12\x00\x15\xe1)\xd8?\x00\x00\x00\x00\x00\x00\x00\x00'
+p19
+tp20
+bsS'calculation script'
+p21
+S'#!/usr/bin/env python\n\n#PBS -q long\n#PBS -r n\n#PBS -l nodes=1:ppn=8\n#PBS -m a\n#PBS -M andypeterson@gmail.com\n#PBS -V\n\nfrom ase import *\nfrom ase.calculators import jacapo as jp\nfrom ase.vibrations import Vibrations\n\nfrom personal.ase import perturbfreeatoms\n\nname = "Cu_CH2"\nvibrateatoms = [18,19,20] # For frequency calculation\nfreeatoms = [0,1,2,3,4,5,18,19,20] # For optimization calculation\n\n# Open the optimized slab without adsorbate.\nslab = read(\'/home/camp/anpet/20091105_adsorbate_vibrations/slabs/Cu/211_3x2x3_kpts441/out.traj\')\n\n# Add C in an hcp site above the step\ncell = slab.cell.copy()\nslab.append(Atom(\'C\',[(slab[0].get_x()+slab[2].get_x())/2.,\n                      (slab[0].get_y()+slab[1].get_y())/2.,\n                      slab[2].get_z()+2.\n                       ]))\n# Add in two H\'s on top of the C\nslab.append(Atom(\'H\',[slab[18].get_x()+.55,\n                      slab[18].get_y(),\n                      slab[18].get_z()+.7]))\nslab.append(Atom(\'H\',[slab[18].get_x()-.55,\n                      slab[18].get_y(),\n                      slab[18].get_z()+.7]))\n\n# Fix the atoms to not be optimized, give the rest random perturbations\n# to break any artificial symmetry.\nmask = [True for atom in slab] # all fixed\nfor free in freeatoms: # free atoms for optimizer\n    mask[free] = False\nslab.set_constraint(FixAtoms(mask=mask))\n\nperturbfreeatoms(atoms=slab,max=0.05)\n\ncalc = jp.Jacapo(nc=name + \'.nc\', #nc output file\n                 pw=340.15, #planewave cutoff\n                 dw=500.00, #density cutoff\n                 nbands=None, # number of bands\n                 kpts=(4,4,1), # k points\n                 xc=\'RPBE\', #exchange correlation method\n                 ft=0.1, #Fermi temperature\n                 symmetry=True,\n                 dipole=True,\n                 spinpol=False,\n                 stay_alive=True\n                )\ncalc.set_convergence()\ncalc.set_dipole(status=True, mixpar=0.2, initval=0.0)\ncalc.set_psp(sym=\'Pb\',psp=\'/home/camp/anpet/common/uspp/pb_ps.uspp\')\n\nslab.set_calculator(calc)\n\ndyn = QuasiNewton(slab,logfile=\'out.log\',trajectory=\'out.traj\')\ndyn.run(fmax=0.05)\n\ne_adsorbed = slab.get_potential_energy()\nprint e_adsorbed\n\nf = open(name + \'.energy\',\'w\')\nf.write(str(e_adsorbed))\nf.close()\n\n\n# Calculate vibrations\nvib = Vibrations(slab,indices=vibrateatoms)\nvib.run()\nvib.summary(method=\'standard\')\n\n# Make trajectory files to visualize the modes.\nfor mode in range(len(vibrateatoms)*3):\n    vib.write_mode(mode)\n\n\n'
+p22
+sS'author'
+p23
+S'AAP'
+p24
+s.

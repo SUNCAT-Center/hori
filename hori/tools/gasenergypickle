@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+"""Command line function to make a pickled dictionary summarizing the
+output of an energy calculation. This script should only be run from within
+the directory where the simulation was run (it copies path info from the
+working directory). The new version has been updated to not pickle the
+ase.Atoms object, but just the atomic coordinates (for future readability,
+so this file is not dependent on having a working version 3 of ASE
+installed) with the keyword atomslist instead of atoms.
+"""
+
+import os
+from optparse import OptionParser
+import pickle
+from ase import io
+from ase.vibrations import Vibrations
+from getpass import getuser
+import commands
+
+# Parse arguments. ######################################
+parser = OptionParser(usage='usage: %prog [options] destination')
+parser.add_option('-e',dest='energy_file',default='out.energy',
+                  help='file with the electronic energy, default=%default')
+parser.add_option('-l',dest='energy_log_file',default='qn.log',
+                  help='ASE log file with the electronic energy, default=%default')
+parser.add_option('-f',dest='input_file',
+                  help='script used to generate the energy, uses whatever *.py file is in the current directory if not specified, or none if "none" ')
+parser.add_option('-t',dest='traj_file',
+                  help='ASE atoms trajectory file, defaults to a *.traj'
+                  ' file that does not begin with "vib"')
+parser.add_option('-a',dest='author',default=getuser(),
+                  help='person who produced the number, default=%default')
+(options,args) = parser.parse_args()
+if len(args) != 1:
+    parser.error('incorrect number of arguments')
+
+# Functions. #############################################
+def find_vibrations(traj_file):
+    """Opens the trajectory file and gets the vibrations in eV."""
+    atoms = io.read(traj_file)
+    vib = Vibrations(atoms)
+    vib_energies = vib.get_energies()
+    return vib_energies
+
+
+# Make dictionary. ########################################
+d = {}
+d['version'] = 2 # version of gas-energy pickle
+# Author.
+d['author'] = options.author
+# Electronic energy.
+if options.energy_log_file:
+    out = commands.getoutput('tail --line 1 '+options.energy_log_file)
+    d['electronic energy'] = float(out.split()[-2])
+else:
+    f = open(options.energy_file,'r')
+    t = f.read()
+    f.close()
+    d['electronic energy'] = float(t)
+# Calculation script.
+if options.input_file:
+    if options.input_file == 'none':
+        d['calculation script'] = None
+    else:
+        f = open(options.input_file,'r')
+        d['calculation script'] = f.read()
+        f.close()
+else:
+    files = [file for file in os.listdir(os.curdir) if file[-3:]=='.py']
+    if len(files) != 1:
+        raise RuntimeError('More than one *.py file. INPUT_FILE must be specified with the -f flag.')
+    f = open(files[0],'r')
+    d['calculation script'] = f.read()
+    f.close()
+# Path.
+d['path'] = os.getcwd()
+
+# Atomic coordinates
+if options.traj_file:
+    traj_file = options.traj_file
+else:
+    files = [f for f in os.listdir(os.curdir) if 
+             f[-5:]=='.traj' and f[:3] != 'vib']
+    if len(files) != 1:
+        raise RuntimeError('Multiple .traj files found for TRAJ_FILE (that'
+                           ' do not begin with vib). Specify one with the '
+                           '-t flag.')
+    traj_file = files[0]
+atoms = io.read(traj_file)
+atomlist = []
+for atom in atoms:
+    atomlist.append((atom.symbol, atom.position))
+d['atomslist'] = atomlist
+
+# Vibrations.
+d['vibrations'] = find_vibrations(traj_file)
+
+
+# Pickle dictionary, making sure the file isn't overwritten.
+outfile = args[0]
+if os.path.isfile(outfile):
+    raise RuntimeError('File "%s" exists. This script does not clobber.'%
+                       outfile)
+f = open(outfile,'w')
+pickle.dump(d,f)
+f.close()
+

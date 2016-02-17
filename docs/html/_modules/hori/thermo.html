@@ -1,0 +1,930 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hori.thermo &mdash; hori  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="hori  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> hori
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_dynamic/hori.html">Source documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">hori</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hori.thermo</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hori.thermo</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">hori</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">ase.thermochemistry</span> <span class="kn">import</span> <span class="n">IdealGasThermo</span><span class="p">,</span> <span class="n">HarmonicThermo</span>
+
+
+<div class="viewcode-block" id="gas_chemical_potential"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.gas_chemical_potential">[docs]</a><span class="k">def</span> <span class="nf">gas_chemical_potential</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">fugacity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For a gas, given its temperature (K) and fugacity (Pa), returns</span>
+<span class="sd">    its chemical potential.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        species (string)</span>
+<span class="sd">        temperature (float)</span>
+<span class="sd">        fugacity (float)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">gasprops</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">species</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Data for this gas (</span><span class="si">%s</span><span class="s1">) is not in gasprops&#39;</span>
+                           <span class="s1">&#39;dictionary. Add to hori.thermo.gasprops&#39;</span> <span class="o">%</span>
+                           <span class="n">species</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">gasdata</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="n">species</span><span class="p">]</span>
+    <span class="n">electronic_energy</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy&#39;</span><span class="p">]</span> <span class="o">+</span>
+                         <span class="n">p</span><span class="p">[</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">])</span>
+    <span class="n">thermo</span> <span class="o">=</span> <span class="n">IdealGasThermo</span><span class="p">(</span><span class="n">vib_energies</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">],</span>
+                            <span class="n">electronicenergy</span><span class="o">=</span><span class="n">electronic_energy</span><span class="p">,</span>
+                            <span class="n">geometry</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span>
+                            <span class="n">atoms</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">],</span>
+                            <span class="n">symmetrynumber</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">],</span>
+                            <span class="n">spin</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;spin&#39;</span><span class="p">])</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">get_gibbs_energy</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="n">fugacity</span><span class="p">)</span>
+    <span class="c1">#mu = thermo.get_gibbs_energy(temperature=temperature,pressure=fugacity)</span>
+    <span class="k">return</span> <span class="n">mu</span></div>
+
+
+<div class="viewcode-block" id="ProtonElectronThermodynamics"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.ProtonElectronThermodynamics">[docs]</a><span class="k">class</span> <span class="nc">ProtonElectronThermodynamics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class that loads the chemical potential data for the proton-electron</span>
+<span class="sd">    pair in the Computational Hydrogen Electrode model, meaning that it</span>
+<span class="sd">    uses the thermodynamic properties of H2 gas at 1 atm and adjusts them</span>
+<span class="sd">    for temperature and voltage. In this module, the voltage is verus RHE,</span>
+<span class="sd">    so a pH correction is not needed.</span>
+
+<span class="sd">    Instantiate with the temperature and voltage, and the chemical</span>
+<span class="sd">    potential of the proton-electron pair is automatically calculated and</span>
+<span class="sd">    stored in self.G. Similarly, after changing the temperature or</span>
+<span class="sd">    voltage with the .set_temperature or .set_voltage method, self.G</span>
+<span class="sd">    is auto-recalculated.</span>
+
+<span class="sd">    Temperature is in K and voltage is in V vs RHE.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        temperature (float)</span>
+<span class="sd">        voltage (float)</span>
+<span class="sd">        functional (string): exchange-correlation functional</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">voltage</span><span class="p">,</span> <span class="n">functional</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">gasdata</span><span class="p">(</span><span class="s1">&#39;H2&#39;</span><span class="p">)</span>  <span class="c1"># hydrogen electrode</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">][</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">][</span><span class="s1">&#39;spin&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">functional</span> <span class="o">==</span> <span class="s1">&#39;BEEF&#39;</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops_BEEF</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">referencepressure</span> <span class="o">=</span> <span class="mf">101325.</span>  <span class="c1"># Pa, RHE definition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;voltage&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+        <span class="n">thermo</span> <span class="o">=</span> <span class="n">IdealGasThermo</span><span class="p">(</span><span class="n">vib_energies</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">],</span>
+                                <span class="n">electronicenergy</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                                  <span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]),</span>
+                                <span class="n">geometry</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span>
+                                <span class="n">atoms</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">],</span>
+                                <span class="n">symmetrynumber</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">],</span>
+                                <span class="n">spin</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;spin&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thermo</span> <span class="o">=</span> <span class="n">thermo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ProtonElectronThermodynamics.set_temperature"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.ProtonElectronThermodynamics.set_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the temperature (K).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProtonElectronThermodynamics.set_voltage"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.ProtonElectronThermodynamics.set_voltage">[docs]</a>    <span class="k">def</span> <span class="nf">set_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the potential (V vs RHE).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_previous</span><span class="p">[</span><span class="s1">&#39;voltage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_calculate_G</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the free energy of the proton-electron pair. Only</span>
+<span class="sd">        recalculates those portions that would change.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_G_H2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thermo</span><span class="o">.</span><span class="n">get_gibbs_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">referencepressure</span><span class="p">,</span>
+                                                       <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous</span><span class="p">[</span><span class="s1">&#39;voltage&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_eU</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G_H2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eU</span></div>
+
+
+<div class="viewcode-block" id="AdsorbateThermodynamics"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics">[docs]</a><span class="k">class</span> <span class="nc">AdsorbateThermodynamics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class that loads adsorbate free energy data for a list of adsorbates</span>
+<span class="sd">    and has methods to report back thermodynamic properties of the list as</span>
+<span class="sd">    a function of the temperature and the electronic energy (without</span>
+<span class="sd">    needing to re-access the data stored on disk). Initialize with</span>
+<span class="sd">    ads_list, which is a list in one of two formats. It is either a list of</span>
+<span class="sd">    the adsorbate names, e.g.,</span>
+
+<span class="sd">        [&#39;CHO&#39;, &#39;COOH&#39;, &#39;CO&#39;]</span>
+
+<span class="sd">    or a list of adsorbates and a vibration mode:</span>
+
+<span class="sd">        [[&#39;CHO&#39;, &#39;generic&#39;], [&#39;COOH&#39;, &#39;specific&#39;], [&#39;CO&#39;, &#39;auto&#39;],]</span>
+
+<span class="sd">    where &#39;generic&#39; means it will calculate vibrations using the vibrations</span>
+<span class="sd">    in the generic folder, &#39;specific&#39; means it will use the specific</span>
+<span class="sd">    vibrations for that adsorbate on the specified surface (and exit with</span>
+<span class="sd">    an error if it is missing) and &#39;auto&#39; means it will attempt to use</span>
+<span class="sd">    &#39;specific&#39; vibrations, but will use &#39;generic&#39; in each instance that the</span>
+<span class="sd">    &#39;specific&#39; vibration is not available. If the first input form is used,</span>
+<span class="sd">    then the vibrations mode is set with the &#39;vibrationsmode&#39; keyword,</span>
+<span class="sd">    which defaults to &#39;auto&#39;. For brevity the numbers 0, 1, and 2 can be</span>
+<span class="sd">    used for &#39;generic&#39;, &#39;specific&#39;, and &#39;auto&#39;, respectively.</span>
+
+<span class="sd">    The adsorbate name should be something like &#39;COOH&#39;. Use &#39;&#39; to indicate</span>
+<span class="sd">    the clean slab. The other inputs are the temperature (in K) and a</span>
+<span class="sd">    dictionary of hydrogen-bond stabilizations by the water overlayer, of</span>
+<span class="sd">    the form hbond_dict[adsorbate] = float (in eV).</span>
+
+<span class="sd">    When this class has all needed info it auto-calculates. When changing </span>
+<span class="sd">    an electronic energy or the temperature, the class auto-recalculates, </span>
+<span class="sd">    so a free energy can just be pulled with self.G[ads].</span>
+
+<span class="sd">    If other properties are needed (mainly the electronic energy), they can</span>
+<span class="sd">    be accessed in self.data[ads].</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ads_list (list)</span>
+<span class="sd">        temperature (float)</span>
+<span class="sd">        hbond_dict (dict, optional)</span>
+<span class="sd">        vibrationsmode (string, optional)</span>
+<span class="sd">        surface (string, optional)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads_list</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">hbond_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">vibrationsmode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">surface</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">hbond_dict</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No hbond_dict specified.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ads_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">vibrationsmode</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;vibrationsmode doubly specified.&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="n">ads_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;generic&#39;</span> <span class="ow">or</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">:</span> <span class="s1">&#39;generic&#39;</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;specific&#39;</span> <span class="ow">or</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">:</span> <span class="s1">&#39;specific&#39;</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">or</span> <span class="n">ads</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">vibrationsmode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">vibrationsmode</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+            <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="n">ads_list</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">:</span> <span class="n">vibrationsmode</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">hbond_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;hbond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;hbond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hbond_dict</span><span class="p">[</span><span class="n">ads</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;G&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vibs&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                         <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                         <span class="s1">&#39;hbonds&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                         <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>  <span class="c1"># keep track of what needs calculation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># direct user access to free energies</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate_elec_energies</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate_vibrations</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recalculate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.recalculate"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.recalculate">[docs]</a>    <span class="k">def</span> <span class="nf">recalculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates free energy information only when things have</span>
+<span class="sd">        changed and the data (i.e., vibrations) exist. If force is True,</span>
+<span class="sd">        then it will recalculate everything regardless of changes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            force (bool, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="n">force</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ads</span> <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_Gcorr</span><span class="p">(</span><span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">(</span><span class="n">ads</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_populate_elec_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If the surface is specified, reads in electronic energies from</span>
+<span class="sd">        the data files. Note that the io function will put a numpy nan in</span>
+<span class="sd">        this spot if the data does not exist.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">electronicenergy</span><span class="p">(</span><span class="n">surface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">,</span>
+                                                     <span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">_populate_vibrations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                             <span class="n">vibrations_mode</span><span class="o">=</span><span class="s1">&#39;as specified&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds generic or specific vibrations to each adsorbate if &#39;all&#39;</span>
+<span class="sd">        is selected, otherwise adds to the individual adsorbate listed.</span>
+<span class="sd">        Will used the type of vibration specified for the adsorbate in</span>
+<span class="sd">        self.data[ads][&#39;vibrequest&#39;] unless otherwise specified. If there</span>
+<span class="sd">        are specific vibration requests and no surface has been specified,</span>
+<span class="sd">        this function just populates *all* vibrations with None.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            adsorbate (string, optional)</span>
+<span class="sd">            vibrations_mode (str, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s1">&#39;specific&#39;</span> <span class="ow">in</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
+                <span class="k">return</span>
+            <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_populate_vibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">vibrations_mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># specific adsorbates</span>
+            <span class="k">if</span> <span class="n">vibrations_mode</span> <span class="o">==</span> <span class="s1">&#39;as specified&#39;</span><span class="p">:</span>
+                <span class="n">vibrations_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;vibrequest&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">vibrations_mode</span> <span class="o">==</span> <span class="s1">&#39;generic&#39;</span><span class="p">:</span>
+                <span class="n">vibs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">genericvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">vibrations_mode</span> <span class="o">==</span> <span class="s1">&#39;specific&#39;</span><span class="p">:</span>
+                <span class="n">vibs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">specificvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">vibrations_mode</span> <span class="o">==</span> <span class="s1">&#39;ignoreimaginary&#39;</span><span class="p">:</span>
+                <span class="n">vibs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">ignoreimaginaryvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">vibrations_mode</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">vibs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">specificvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No specific adsorptions for </span><span class="si">%s</span><span class="s1"> on </span><span class="si">%s</span><span class="s1">. Using &#39;</span>
+                          <span class="s1">&#39;generic&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">))</span>
+                    <span class="n">vibs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">genericvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vibs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_Gcorr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Re-calculates the G_correction for the specified adsorbate. Note</span>
+<span class="sd">        since only harmonic degrees of freedom are considered and the clean</span>
+<span class="sd">        slab is considered to be static (i.e., its vibrations are</span>
+<span class="sd">        unaffected by the presence of the adsorbate), then its G correction</span>
+<span class="sd">        is 0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            adsorbate (string)</span>
+<span class="sd">            verbose (bool, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vibs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span>
+            <span class="n">thermo</span> <span class="o">=</span> <span class="n">HarmonicThermo</span><span class="p">(</span><span class="n">vib_energies</span><span class="o">=</span><span class="n">vibs</span><span class="p">,</span>
+                                    <span class="n">electronicenergy</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">get_gibbs_energy</span><span class="p">(</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_G</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Recalculates the free energy for an adsorbate from</span>
+<span class="sd">        pre-calculated parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            adsorbate (string)</span>
+<span class="sd">            verbose (bool, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;hbond&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%20s%13.3f</span><span class="s1"> eV&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">36</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Contributions to G for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">adsorbate</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">36</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;Electronic energy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]))</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;Hydrogen bonding&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;hbond&#39;</span><span class="p">]))</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;E -&gt; G&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;EtoG&#39;</span><span class="p">]))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">36</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">]))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">36</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_scale_E</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">fxn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a scaled value of the electronic energy. adsorbate is</span>
+<span class="sd">        the name of an adsorbate (e.g., &#39;COOH&#39;) and reference is the name</span>
+<span class="sd">        of the reference (e.g., &#39;CH3&#39;). fxn is the function that links the</span>
+<span class="sd">        two, as in:</span>
+<span class="sd">            E[adsorbate] = fxn(E[reference])</span>
+<span class="sd">        it is assumed that fxn uses referenced values for all energies,</span>
+<span class="sd">        that is E = E_elec[ads*] - E_elec[*] - E_ref(ads)</span>
+<span class="sd">        where E_ref is the atomic reference energies of the adsorbate.</span>
+<span class="sd">        Returns the adsorbate energy with normal reference, </span>
+<span class="sd">        e.g., -55232.24 eV.</span>
+<span class="sd">        Note that the electronic energy of the reference should be already</span>
+<span class="sd">        set before this function is called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># FIXME: this function is so far only used within an external</span>
+        <span class="c1"># script, I may want to change the approach and delete it, for</span>
+        <span class="c1"># example if I change the reference to pull out the atomic</span>
+        <span class="c1"># normalizing (I need to leave in the clean slab normalizing).</span>
+        <span class="c1"># FIXME: I will need to update these to the new data form next</span>
+        <span class="c1"># time I use it.</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elec_energy</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span>
+             <span class="o">-</span> <span class="n">io</span><span class="o">.</span><span class="n">electronicenergy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_surface</span><span class="p">)</span>
+             <span class="o">-</span> <span class="n">calculate_reference_energ</span><span class="p">(</span><span class="n">reference</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">fxn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elec_energy</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> \
+            <span class="n">io</span><span class="o">.</span><span class="n">electronicenergy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_surface</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">calculate_reference_energy</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">)</span>
+        <span class="c1"># Make sure to add in a self._changed[&#39;E&#39;] and a</span>
+        <span class="c1"># self.recalculate()</span>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.set_temperature"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.set_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the temperature (K) for adsorbate free energy calcs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            temperature (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalculate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.set_electronic_energy"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.set_electronic_energy">[docs]</a>    <span class="k">def</span> <span class="nf">set_electronic_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">elec_energy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the electronic energy (eV) for the specified adsorbate and</span>
+<span class="sd">        re-calculates G based only on that change (doesn&#39;t trigger a global</span>
+<span class="sd">        recalculate).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            adsorbate (string)</span>
+<span class="sd">            elec_energy (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">adsorbate</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elec_energy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.set_surface"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.set_surface">[docs]</a>    <span class="k">def</span> <span class="nf">set_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Looks up the electronic energies, and, if specified in</span>
+<span class="sd">        vibrequest, vibrations, for each adsorbate on the </span>
+<span class="sd">        surface specified using the io functions of the hori module, </span>
+<span class="sd">        assigns them, and re-calculates G.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            surface (string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ads</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">electronicenergy</span><span class="p">(</span><span class="n">surface</span><span class="o">=</span><span class="n">surface</span><span class="p">,</span>
+                                                      <span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_populate_vibrations</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changed</span><span class="p">[</span><span class="s1">&#39;vibs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalculate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.set_energies_by_metal"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.set_energies_by_metal">[docs]</a>    <span class="k">def</span> <span class="nf">set_energies_by_metal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Legacy function -- use set_surface.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metal (string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_surface</span><span class="p">(</span><span class="n">metal</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdsorbateThermodynamics.print_thermodynamic_contributions"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.AdsorbateThermodynamics.print_thermodynamic_contributions">[docs]</a>    <span class="k">def</span> <span class="nf">print_thermodynamic_contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads_list</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prints the contributions to U,S,G for each adsorbate in ads_list</span>
+<span class="sd">        at the current conditions.  If gas_list is &#39;all&#39;, then prints for </span>
+<span class="sd">        all gases. Note that this forces a re-calculation -- if any</span>
+<span class="sd">        parameters have changed, then what is reported will be for those</span>
+<span class="sd">        new values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ads_list (list, optional):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Thermodynamic contributions for adsorbates:&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ads_list</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">ads_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ads</span> <span class="ow">in</span> <span class="n">ads_list</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">ads</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ads</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;No G-correction for clean slab.&#39;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Electronic energy: </span><span class="si">%.3f</span><span class="s1"> eV&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">])</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Free energy:       </span><span class="si">%.3f</span><span class="s1"> eV&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_Gcorr</span><span class="p">(</span><span class="n">ads</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_G</span><span class="p">(</span><span class="n">ads</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GasThermodynamics"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics">[docs]</a><span class="k">class</span> <span class="nc">GasThermodynamics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class that loads gas chemical potential data for a list of gases,</span>
+<span class="sd">    and has methods to report back thermodynamic properties of the list</span>
+<span class="sd">    of gases as a function of temperature and fugacity (without needing</span>
+<span class="sd">    to re-access the data stored on disk.</span>
+
+<span class="sd">    Initialize with gas_list, which is a list of gases and their</span>
+<span class="sd">    corresponding temperature and pressure (fugacity), of the form:</span>
+
+<span class="sd">        [ [gas_name, temperature, fugacity], ... ]</span>
+
+<span class="sd">    After instantiating this class or changing a temperature or pressure,</span>
+<span class="sd">    this class auto-recalculates, so a free energy can just be pulled with</span>
+<span class="sd">    self.G[gas]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gas_list (list)</span>
+<span class="sd">        functional (string)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_list</span><span class="p">,</span> <span class="n">functional</span><span class="p">):</span>
+        <span class="n">gas_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">gas</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">fugacity</span> <span class="ow">in</span> <span class="n">gas_list</span><span class="p">:</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">gasdata</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">gasprops</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">gas</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Data for this gas (</span><span class="si">%s</span><span class="s1">) is not in &#39;</span>
+                                   <span class="s1">&#39;gasprops dictionary. Add to &#39;</span>
+                                   <span class="s1">&#39;hori.thermo.gasprops&#39;</span> <span class="o">%</span> <span class="n">gas</span><span class="p">)</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">gasprops</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">]</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasprops</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;spin&#39;</span><span class="p">]</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">gasprops</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperature</span>
+            <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;fugacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fugacity</span>
+            <span class="k">if</span> <span class="n">functional</span> <span class="o">==</span> <span class="s1">&#39;BEEF&#39;</span><span class="p">:</span>
+                <span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">gasprops_BEEF</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span> <span class="o">=</span> <span class="n">gas_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_all_Gs</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_one_G</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">]</span>
+        <span class="n">thermo</span> <span class="o">=</span> <span class="n">IdealGasThermo</span><span class="p">(</span><span class="n">vib_energies</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">],</span>
+                                <span class="n">electronicenergy</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                                  <span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">]),</span>
+                                <span class="n">geometry</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span>
+                                <span class="n">atoms</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">],</span>
+                                <span class="n">symmetrynumber</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;symmetrynumber&#39;</span><span class="p">],</span>
+                                <span class="n">spin</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;spin&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">gas</span><span class="p">]</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">get_gibbs_energy</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">],</span>
+                                              <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fugacity&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_all_Gs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">gas</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_one_G</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GasThermodynamics.set_gas_temperature"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics.set_gas_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">set_gas_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the temperature of an individual gas.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            gas (string)</span>
+<span class="sd">            temperature (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_one_G</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GasThermodynamics.set_gas_fugacity"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics.set_gas_fugacity">[docs]</a>    <span class="k">def</span> <span class="nf">set_gas_fugacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas</span><span class="p">,</span> <span class="n">fugacity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change the fugacity of an individual gas.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            gas (string)</span>
+<span class="sd">            fugacity (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;fugacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fugacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_one_G</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GasThermodynamics.set_all_temperatures"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics.set_all_temperatures">[docs]</a>    <span class="k">def</span> <span class="nf">set_all_temperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the temperature of all gases to the same value.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            temperature (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">gas</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_all_Gs</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GasThermodynamics.set_all_fugacities"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics.set_all_fugacities">[docs]</a>    <span class="k">def</span> <span class="nf">set_all_fugacities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fugacity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the fugacity of all gases to the same value.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fugacity (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">gas</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;fugacity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fugacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_all_Gs</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GasThermodynamics.print_thermodynamic_contributions"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.thermo.GasThermodynamics.print_thermodynamic_contributions">[docs]</a>    <span class="k">def</span> <span class="nf">print_thermodynamic_contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_list</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prints the contributions to H,S,G for each gas in gas_list at</span>
+<span class="sd">        the current conditions.  If gas_list is &#39;all&#39;, then prints for all </span>
+<span class="sd">        gases.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            gas_list (list, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">gas_list</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">gas_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">gas</span> <span class="ow">in</span> <span class="n">gas_list</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">gas</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Electronic energy contains </span><span class="si">%+.3f</span><span class="s1"> eV correction.&#39;</span> <span class="o">%</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">gas_dict</span><span class="p">[</span><span class="n">gas</span><span class="p">][</span><span class="s1">&#39;electronic energy correction&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_one_G</span><span class="p">(</span><span class="n">gas</span><span class="o">=</span><span class="n">gas</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># Immutable gas properties follow.</span>
+<span class="n">gasprops</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;CO2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.45</span><span class="p">},</span>
+    <span class="s1">&#39;COS&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.45</span><span class="p">},</span>
+    <span class="s1">&#39;COSe&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.45</span><span class="p">},</span>
+    <span class="s1">&#39;CH4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">0</span><span class="p">},</span>  <span class="c1"># 0 for RPBE</span>
+    <span class="s1">&#39;HCOOH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+              <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+              <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.453</span><span class="p">},</span>
+    <span class="s1">&#39;CO&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2O&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2S&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2Se&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH2O&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C2H4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">4.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C3H7COOH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C3H8&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH3OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+              <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+              <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+    <span class="s1">&#39;OCHCHO&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+               <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+               <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH3CH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;OHCH2CH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                   <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                   <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;OCHCH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;SH2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;N2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;O2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;NH3&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">gasprops_BEEF</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;CO2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.33</span><span class="p">},</span>
+    <span class="s1">&#39;COS&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.33</span><span class="p">},</span>
+    <span class="s1">&#39;COSe&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.33</span><span class="p">},</span>
+    <span class="s1">&#39;CH4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>  <span class="c1"># 0.09 for Felix BEEF #0 for RPBE</span>
+    <span class="s1">&#39;HCOOH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+              <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+              <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.33</span><span class="p">},</span>
+    <span class="s1">&#39;CO&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2O&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2S&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2Se&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH2O&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C2H4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">4.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C3H7COOH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;C3H8&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+             <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+             <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH3OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+              <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+              <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+    <span class="s1">&#39;OCHCHO&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+               <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+               <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;CH3CH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;OHCH2CH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                   <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                   <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;OCHCH2OH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;SH2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;N2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;H2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;O2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+           <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">},</span>
+    <span class="s1">&#39;NH3&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;symmetrynumber&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+            <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+            <span class="s1">&#39;electronic energy correction&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mf">0.00</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      Last updated on Jul 24, 2016.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

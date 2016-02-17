@@ -1,0 +1,9 @@
+.*
+*.log
+output
+*.pyc
+*.egg-info
+!/.gitignore
+build/
+dist/
+RELEASE-VERSION

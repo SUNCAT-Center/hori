@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hori.pathway &mdash; hori  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="hori  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> hori
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_dynamic/hori.html">Source documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">hori</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hori.pathway</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hori.pathway</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;Contains functions to calculate the change in free energy along the CO2</span>
+<span class="sd">reduction pathway.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">hori.common</span> <span class="kn">import</span> <span class="n">countatoms</span>
+
+
+<div class="viewcode-block" id="Pathway"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.Pathway">[docs]</a><span class="k">class</span> <span class="nc">Pathway</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class to hold pathway and connectivity information, and to calculate</span>
+<span class="sd">    the free energies along that pathway given binding (free) energies and</span>
+<span class="sd">    chemical potentials. After initializing, add steps to the pathway with </span>
+<span class="sd">    the add_step function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        startingstep (str, optional):</span>
+<span class="sd">        startingenergy (float, optional):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startingstep</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">startingenergy</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">startingstep</span> <span class="o">=</span> <span class="n">startingstep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">startingG</span> <span class="o">=</span> <span class="n">startingenergy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">startingstep</span><span class="p">,</span> <span class="p">[]]]</span>
+
+<div class="viewcode-block" id="Pathway.addstep"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.Pathway.addstep">[docs]</a>    <span class="k">def</span> <span class="nf">addstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to add a step to the pathway between the first and second</span>
+<span class="sd">        states. Call this method with the state names and the list of</span>
+<span class="sd">        changes between them. E.g., if state &#39;1&#39; to state &#39;5&#39; is::</span>
+
+<span class="sd">            * + CO2 + (H+ + e-) -&gt; *COOH</span>
+
+<span class="sd">        then use this method with first=&#39;1&#39;,second=&#39;5&#39;, and list = </span>
+<span class="sd">        [&#39;-s&#39;, &#39;-CO2&#39;, &#39;-pe&#39;, &#39;+a_COOH&#39;]. In the list, reactants are</span>
+<span class="sd">        preceded with a - and products with a +. Following the +/- is::</span>
+
+<span class="sd">            s : bare surface</span>
+<span class="sd">            pe : proton-electron pair</span>
+<span class="sd">            a_&lt;chemical formula&gt; : adsorbate</span>
+<span class="sd">            &lt;chemical formula&gt; : non-adsorbed species</span>
+
+<span class="sd">        where the &lt;&gt;&#39;s are left off the chemical formula. The info is</span>
+
+<span class="sd">        sanity checked and added to an internal list of the form:</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            [ [firststate,secondstate,reaction], ... ]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first (string)</span>
+<span class="sd">            second (string)</span>
+<span class="sd">            list (list)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert the list of strings to a list of dictionaries</span>
+        <span class="n">reaction</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">list_string</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">reaction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_list_string</span><span class="p">(</span><span class="n">list_string</span><span class="p">))</span>
+        <span class="c1"># Sanity check to make sure mass is conserved.</span>
+        <span class="n">surfaces</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>  <span class="c1"># (for proton-electron pairs)</span>
+        <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">reaction</span><span class="p">:</span>
+            <span class="n">surfaces</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;adsorbed&#39;</span><span class="p">]</span>
+            <span class="n">elements</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;pe&#39;</span><span class="p">]</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">countatoms</span><span class="p">(</span><span class="n">species</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">])</span>  <span class="c1"># formula dict</span>
+            <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">subscript</span> <span class="ow">in</span> <span class="n">fd</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">elements</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="n">elements</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">subscript</span>
+
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">elements</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">surfaces</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Inconsist mass balance in reaction.&#39;</span><span class="p">)</span>
+        <span class="c1"># Sanity check to make sure the starting step exists.</span>
+        <span class="k">if</span> <span class="n">first</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">step</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Prior step does not exist.&quot;</span><span class="p">)</span>
+        <span class="c1"># Sanity check to make sure exact same step doesn&#39;t already exist.</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">step</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">first</span> <span class="ow">and</span> <span class="n">step</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">second</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Step exists -- cannot overwrite.&#39;</span><span class="p">)</span>
+        <span class="c1"># Add to the internal list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">reaction</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Pathway.calculate_Gs"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.Pathway.calculate_Gs">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_Gs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BG</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu_pe</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the free energy along every step in the pathway, and</span>
+<span class="sd">        returns this as a dictionary. Also store it in self.G.</span>
+<span class="sd">        Takes as input BG, which is a dictionary of adsorbate free</span>
+<span class="sd">        energies, mu, which is a dictionary of gas free energies, and</span>
+<span class="sd">        mu_pe which is the free energy of a proton-electron pair (the last</span>
+<span class="sd">        is a float, not a dictionary). These are usually taken from</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            BG (hori.thermo.AdsorbateThermodynamics.G)</span>
+<span class="sd">            mu (hori.thermo.GasThermodynamics.G)</span>
+<span class="sd">            mu_pe (hori.thermo.ProtonElectronThermodynamics.G)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">startingstep</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">startingG</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">priorstate</span><span class="p">,</span> <span class="n">nextstate</span><span class="p">,</span> <span class="n">rxn</span> <span class="o">=</span> <span class="n">step</span>
+            <span class="k">if</span> <span class="n">priorstate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Prior step does not exist. This method &#39;</span>
+                                   <span class="s1">&#39;is set up assuming that all steps were &#39;</span>
+                                   <span class="s1">&#39;added in such an order that the prior &#39;</span>
+                                   <span class="s1">&#39;step occurs earlier in the list.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nextstate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">G</span><span class="p">[</span><span class="n">nextstate</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">priorstate</span><span class="p">]</span> <span class="o">+</span>
+                                <span class="n">calculate_rxn_deltaG</span><span class="p">(</span><span class="n">rxn</span><span class="p">,</span> <span class="n">BG</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu_pe</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">testG</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">priorstate</span><span class="p">]</span> <span class="o">+</span>
+                         <span class="n">calculate_rxn_deltaG</span><span class="p">(</span><span class="n">rxn</span><span class="p">,</span> <span class="n">BG</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu_pe</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">testG</span> <span class="o">!=</span> <span class="n">G</span><span class="p">[</span><span class="n">nextstate</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Two different energies calculated &#39;</span>
+                                       <span class="s1">&#39;for state </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">nextstate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="n">G</span>
+        <span class="k">return</span> <span class="n">G</span></div>
+
+<div class="viewcode-block" id="Pathway.find_limiting_potential"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.Pathway.find_limiting_potential">[docs]</a>    <span class="k">def</span> <span class="nf">find_limiting_potential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Uses the current values of the the free energy (stored in</span>
+<span class="sd">        self.G; run self.calculate_Gs() first with mu_pe set to 0 V to</span>
+<span class="sd">        establish this) to find the limiting potential and the step that</span>
+<span class="sd">        limits the potential. This is defined as the largest uphill step</span>
+<span class="sd">        -- after this is overcome, the pathway will be downhill.</span>
+
+<span class="sd">        If the pathway is branched, then the path must be specified,</span>
+
+<span class="sd">        similar to:</span>
+<span class="sd">            path = [&#39;1&#39;,&#39;28&#39;,&#39;4&#39;]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (list, optional):</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check to be sure pathway is not branched.</span>
+            <span class="n">startsteps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">startsteps</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;path must be specified for branched&#39;</span>
+                                       <span class="s1">&#39; pathways.&#39;</span><span class="p">)</span>
+                <span class="n">startsteps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="n">limiting_potential</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+            <span class="n">dG</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">step</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">[</span><span class="n">step</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">dG</span> <span class="o">&gt;</span> <span class="n">limiting_potential</span><span class="p">:</span>
+                <span class="n">limiting_potential</span> <span class="o">=</span> <span class="n">dG</span>
+                <span class="n">limiting_step</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">step</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">limiting_potential</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="k">return</span> <span class="n">limiting_potential</span><span class="p">,</span> <span class="n">limiting_step</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_list_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dictionary with the count of atoms (and surfaces)</span>
+<span class="sd">        in the strings in the list fed to Pathway.addstep().</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string (string)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get sign.</span>
+        <span class="k">if</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Misformatted string: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">string</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="c1"># Pull off any coefficient.</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[0-9.]+&#39;</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">*=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">():]</span>
+        <span class="c1"># Get if surface, adsorbate, or desorbed.</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>  <span class="c1"># Pure surface</span>
+            <span class="n">adsorbed</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">chemicalformula</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">elif</span> <span class="n">string</span> <span class="o">==</span> <span class="s1">&#39;pe&#39;</span><span class="p">:</span>  <span class="c1"># proton-electron pair</span>
+            <span class="n">adsorbed</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">chemicalformula</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">elif</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>  <span class="c1"># Adsorbed chemical</span>
+            <span class="n">adsorbed</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">chemicalformula</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Desorbed chemical</span>
+            <span class="n">adsorbed</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">chemicalformula</span> <span class="o">=</span> <span class="n">string</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span>
+             <span class="s1">&#39;adsorbed&#39;</span><span class="p">:</span> <span class="n">adsorbed</span><span class="p">,</span>
+             <span class="s1">&#39;formula&#39;</span><span class="p">:</span> <span class="n">chemicalformula</span><span class="p">,</span>
+             <span class="s1">&#39;pe&#39;</span><span class="p">:</span> <span class="n">pe</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+
+<div class="viewcode-block" id="calculate_rxn_deltaG"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.calculate_rxn_deltaG">[docs]</a><span class="k">def</span> <span class="nf">calculate_rxn_deltaG</span><span class="p">(</span><span class="n">rxn</span><span class="p">,</span> <span class="n">BG</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu_pe</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates delta-G of reaction for the reaction listed in rxn, given</span>
+<span class="sd">    dictionaries of binding free energy (BG) and non-adsorbed species</span>
+<span class="sd">    chemical potential (mu), as well as the chemical potential of a proton-</span>
+<span class="sd">    electron pair at the current voltage (and pH, if applicable). rxn</span>
+<span class="sd">    is in the format created by Pathway.addstep(). Note that in general,</span>
+<span class="sd">    BG[&#39;&#39;] will need to be defined; this is the clean slab&#39;s binding</span>
+<span class="sd">    energy, which may be 0. or may be a large number, depending on the</span>
+<span class="sd">    reference state chosen.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rxn (list)</span>
+<span class="sd">        BG (hori.thermo.AdsorbateThermodynamics.G)</span>
+<span class="sd">        mu (hori.thermo.GasThermodynamics.G)</span>
+<span class="sd">        mu_pe (hori.thermo.ProtonElectronThermodynamics.G)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dG</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">rxn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;adsorbed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">dG</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">BG</span><span class="p">[</span><span class="n">species</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;pe&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
+            <span class="n">dG</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">mu_pe</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dG</span> <span class="o">+=</span> <span class="n">species</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">mu</span><span class="p">[</span><span class="n">species</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">dG</span></div>
+
+
+<div class="viewcode-block" id="step2string"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.pathway.step2string">[docs]</a><span class="k">def</span> <span class="nf">step2string</span><span class="p">(</span><span class="n">rxn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert reaction step (as used in pathway) to a string.                                                                                                       </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rxn (list): Description</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spcs</span> <span class="o">=</span> <span class="n">rxn</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">reactants</span> <span class="o">=</span> <span class="s1">r&#39;&#39;</span>
+    <span class="n">products</span> <span class="o">=</span> <span class="s1">r&#39;&#39;</span>
+    <span class="c1"># define mappings for species keywords to string representation</span>
+    <span class="n">adsorbed_str</span> <span class="o">=</span> <span class="p">{</span><span class="bp">True</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+    <span class="n">pe_str</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.0</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">:</span> <span class="s1">&#39; H+ + e-&#39;</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">spc</span> <span class="ow">in</span> <span class="n">spcs</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">spc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">adsorbed_str</span><span class="p">[</span><span class="n">spc</span><span class="p">[</span><span class="s1">&#39;adsorbed&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="n">pe_str</span><span class="p">[</span><span class="n">spc</span><span class="p">[</span><span class="s1">&#39;pe&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="s1">&#39; + &#39;</span>
+        <span class="k">if</span> <span class="n">spc</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">reactants</span> <span class="o">+=</span> <span class="n">s</span>
+        <span class="k">elif</span> <span class="n">spc</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">products</span> <span class="o">+=</span> <span class="n">s</span>
+    <span class="k">return</span> <span class="n">reactants</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">products</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      Last updated on Jul 24, 2016.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,907 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hori package &mdash; hori  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="hori  documentation" href="../index.html"/>
+        <link rel="prev" title="Hori" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hori
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Source documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hori.common">hori.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hori.io">hori.io module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hori.pathway">hori.pathway module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hori.plots">hori.plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hori.thermo">hori.thermo module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">hori</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>hori package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_dynamic/hori.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-hori">
+<span id="hori-package"></span><h1>hori package<a class="headerlink" href="#module-hori" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hori.common">
+<span id="hori-common-module"></span><h2>hori.common module<a class="headerlink" href="#module-hori.common" title="Permalink to this headline">¶</a></h2>
+<p>Contains common elements, such as reference energies.</p>
+<dl class="function">
+<dt id="hori.common.calculate_reference_energy">
+<code class="descclassname">hori.common.</code><code class="descname">calculate_reference_energy</code><span class="sig-paren">(</span><em>formula</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/common.html#calculate_reference_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.common.calculate_reference_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a formula, such as CH2OH, counts the atoms and makes a
+reference energy (eV) based on the atomic energies in
+reference_energies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.common.countatoms">
+<code class="descclassname">hori.common.</code><code class="descname">countatoms</code><span class="sig-paren">(</span><em>formula</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/common.html#countatoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.common.countatoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an atomic formula, e.g. CH2O, returns a dictionary of
+atomic counts, e.g, d = {&#8216;C&#8217;:1,&#8217;H&#8217;:2,&#8217;O&#8217;:1}.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.common.create_full_pathway">
+<code class="descclassname">hori.common.</code><code class="descname">create_full_pathway</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/common.html#create_full_pathway"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.common.create_full_pathway" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full CO2 reduction pathway that I have commonly looked
+at.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.common.hbond_dict">
+<code class="descclassname">hori.common.</code><code class="descname">hbond_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/common.html#hbond_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.common.hbond_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of hydrogen bond stabilizations, in eV.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.common.hbond_dict_none">
+<code class="descclassname">hori.common.</code><code class="descname">hbond_dict_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/common.html#hbond_dict_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.common.hbond_dict_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of hydrogen bond stabilizations, in eV.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="hori.common.reference_energies">
+<code class="descclassname">hori.common.</code><code class="descname">reference_energies</code><em class="property"> = {'H': -16.01475, 'C': -155.456, 'O': -437.7214}</em><a class="headerlink" href="#hori.common.reference_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>For convenience, all of the surfaces which have calculations
+are listed in all_surfaces.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hori.io">
+<span id="hori-io-module"></span><h2>hori.io module<a class="headerlink" href="#module-hori.io" title="Permalink to this headline">¶</a></h2>
+<p>Functions to read in or write out data.</p>
+<dl class="function">
+<dt id="hori.io.atomsfromlist">
+<code class="descclassname">hori.io.</code><code class="descname">atomsfromlist</code><span class="sig-paren">(</span><em>atomslist</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#atomsfromlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.atomsfromlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a list of atomic symbols and coordinates, as in
+[atom1, atom2, ...] where atomX = (symbol, (x,y,z)), and symbol is the
+atomic symbol (e.g. &#8220;Na&#8221;) and x,y,z is the position, in Angstroms, of
+the atom. Returns an ASE atoms object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.electronicenergy">
+<code class="descclassname">hori.io.</code><code class="descname">electronicenergy</code><span class="sig-paren">(</span><em>surface</em>, <em>adsorbate=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#electronicenergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.electronicenergy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in the electronic energy from the calculated data set. If the
+adsorbate is None or &#8216;&#8217;, then returns the energy of the clean slab,
+if the energy doesn&#8217;t exist in the data set, then returns nan. Alerts
+the user to this fact if verbose=True.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.gasdata">
+<code class="descclassname">hori.io.</code><code class="descname">gasdata</code><span class="sig-paren">(</span><em>species</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#gasdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.gasdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in the electronic energy and vibrations from the calculated
+data set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.genericvibrations">
+<code class="descclassname">hori.io.</code><code class="descname">genericvibrations</code><span class="sig-paren">(</span><em>adsorbate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#genericvibrations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.genericvibrations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in the generic vibrations used for adsorbates in general.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.get_directory">
+<code class="descclassname">hori.io.</code><code class="descname">get_directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#get_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.get_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal value of datapath.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.ignoreimaginaryvibrations">
+<code class="descclassname">hori.io.</code><code class="descname">ignoreimaginaryvibrations</code><span class="sig-paren">(</span><em>adsorbate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#ignoreimaginaryvibrations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.ignoreimaginaryvibrations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in the generic vibrations used for adsorbates in general.
+Calculates only real part.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.set_directory">
+<code class="descclassname">hori.io.</code><code class="descname">set_directory</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#set_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.set_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use to set a directory of pickle files other than the current. The
+directory specified must have subdirectories &#8216;electronic-energies&#8217;,
+and/or &#8216;generic-vibrations&#8217;, depending on the data to be accessed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.io.specificvibrations">
+<code class="descclassname">hori.io.</code><code class="descname">specificvibrations</code><span class="sig-paren">(</span><em>adsorbate</em>, <em>surface</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/io.html#specificvibrations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.io.specificvibrations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in the vibrations for an adsorbate on a specific surface.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hori.pathway">
+<span id="hori-pathway-module"></span><h2>hori.pathway module<a class="headerlink" href="#module-hori.pathway" title="Permalink to this headline">¶</a></h2>
+<p>Contains functions to calculate the change in free energy along the CO2
+reduction pathway.</p>
+<dl class="class">
+<dt id="hori.pathway.Pathway">
+<em class="property">class </em><code class="descclassname">hori.pathway.</code><code class="descname">Pathway</code><span class="sig-paren">(</span><em>startingstep='1'</em>, <em>startingenergy=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#Pathway"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.Pathway" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold pathway and connectivity information, and to calculate
+the free energies along that pathway given binding (free) energies and
+chemical potentials. After initializing, add steps to the pathway with
+the add_step function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>startingstep</strong> (<em>str, optional</em>) &#8211; </li>
+<li><strong>startingenergy</strong> (<em>float, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hori.pathway.Pathway.addstep">
+<code class="descname">addstep</code><span class="sig-paren">(</span><em>first</em>, <em>second</em>, <em>list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#Pathway.addstep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.Pathway.addstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to add a step to the pathway between the first and second
+states. Call this method with the state names and the list of
+changes between them. E.g., if state &#8216;1&#8217; to state &#8216;5&#8217; is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="o">+</span> <span class="n">CO2</span> <span class="o">+</span> <span class="p">(</span><span class="n">H</span><span class="o">+</span> <span class="o">+</span> <span class="n">e</span><span class="o">-</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">*</span><span class="n">COOH</span>
+</pre></div>
+</div>
+<p>then use this method with first=&#8216;1&#8217;,second=&#8216;5&#8217;, and list =
+[&#8216;-s&#8217;, &#8216;-CO2&#8217;, &#8216;-pe&#8217;, &#8216;+a_COOH&#8217;]. In the list, reactants are
+preceded with a - and products with a +. Following the +/- is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="p">:</span> <span class="n">bare</span> <span class="n">surface</span>
+<span class="n">pe</span> <span class="p">:</span> <span class="n">proton</span><span class="o">-</span><span class="n">electron</span> <span class="n">pair</span>
+<span class="n">a_</span><span class="o">&lt;</span><span class="n">chemical</span> <span class="n">formula</span><span class="o">&gt;</span> <span class="p">:</span> <span class="n">adsorbate</span>
+<span class="o">&lt;</span><span class="n">chemical</span> <span class="n">formula</span><span class="o">&gt;</span> <span class="p">:</span> <span class="n">non</span><span class="o">-</span><span class="n">adsorbed</span> <span class="n">species</span>
+</pre></div>
+</div>
+<p>where the &lt;&gt;&#8217;s are left off the chemical formula. The info is</p>
+<p>sanity checked and added to an internal list of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span><span class="n">firststate</span><span class="p">,</span><span class="n">secondstate</span><span class="p">,</span><span class="n">reaction</span><span class="p">],</span> <span class="o">...</span> <span class="p">]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>first</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>second</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>list</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.pathway.Pathway.calculate_Gs">
+<code class="descname">calculate_Gs</code><span class="sig-paren">(</span><em>BG</em>, <em>mu</em>, <em>mu_pe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#Pathway.calculate_Gs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.Pathway.calculate_Gs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the free energy along every step in the pathway, and
+returns this as a dictionary. Also store it in self.G.
+Takes as input BG, which is a dictionary of adsorbate free
+energies, mu, which is a dictionary of gas free energies, and
+mu_pe which is the free energy of a proton-electron pair (the last
+is a float, not a dictionary). These are usually taken from</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>BG</strong> (<em>hori.thermo.AdsorbateThermodynamics.G</em>) &#8211; </li>
+<li><strong>mu</strong> (<em>hori.thermo.GasThermodynamics.G</em>) &#8211; </li>
+<li><strong>mu_pe</strong> (<em>hori.thermo.ProtonElectronThermodynamics.G</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.pathway.Pathway.find_limiting_potential">
+<code class="descname">find_limiting_potential</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#Pathway.find_limiting_potential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.Pathway.find_limiting_potential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the current values of the the free energy (stored in
+self.G; run self.calculate_Gs() first with mu_pe set to 0 V to
+establish this) to find the limiting potential and the step that
+limits the potential. This is defined as the largest uphill step
+&#8211; after this is overcome, the pathway will be downhill.</p>
+<p>If the pathway is branched, then the path must be specified,</p>
+<dl class="docutils">
+<dt>similar to:</dt>
+<dd>path = [&#8216;1&#8217;,&#8216;28&#8217;,&#8216;4&#8217;]</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>list, optional</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.pathway.calculate_rxn_deltaG">
+<code class="descclassname">hori.pathway.</code><code class="descname">calculate_rxn_deltaG</code><span class="sig-paren">(</span><em>rxn</em>, <em>BG</em>, <em>mu</em>, <em>mu_pe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#calculate_rxn_deltaG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.calculate_rxn_deltaG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates delta-G of reaction for the reaction listed in rxn, given
+dictionaries of binding free energy (BG) and non-adsorbed species
+chemical potential (mu), as well as the chemical potential of a proton-
+electron pair at the current voltage (and pH, if applicable). rxn
+is in the format created by Pathway.addstep(). Note that in general,
+BG[&#8216;&#8217;] will need to be defined; this is the clean slab&#8217;s binding
+energy, which may be 0. or may be a large number, depending on the
+reference state chosen.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rxn</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; </li>
+<li><strong>BG</strong> (<em>hori.thermo.AdsorbateThermodynamics.G</em>) &#8211; </li>
+<li><strong>mu</strong> (<em>hori.thermo.GasThermodynamics.G</em>) &#8211; </li>
+<li><strong>mu_pe</strong> (<em>hori.thermo.ProtonElectronThermodynamics.G</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.pathway.step2string">
+<code class="descclassname">hori.pathway.</code><code class="descname">step2string</code><span class="sig-paren">(</span><em>rxn</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/pathway.html#step2string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.pathway.step2string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert reaction step (as used in pathway) to a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rxn</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; Description</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hori.plots">
+<span id="hori-plots-module"></span><h2>hori.plots module<a class="headerlink" href="#module-hori.plots" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hori.plots.PlotStates">
+<em class="property">class </em><code class="descclassname">hori.plots.</code><code class="descname">PlotStates</code><span class="sig-paren">(</span><em>ax</em>, <em>G</em>, <em>halfwidth</em>, <em>textwidth</em>, <em>fontsize</em>, <em>color</em>, <em>textcolor</em>, <em>dashcolor</em>, <em>textposition='inline'</em>, <em>text_vspace=0.0</em>, <em>lw=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/plots.html#PlotStates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.plots.PlotStates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functions to update existing plots with energy levels and connectors.
+Initialize as</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">PlotStates</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">halfwidth</span><span class="p">,</span><span class="n">textwidth</span><span class="p">,</span><span class="n">fontsize</span><span class="p">,</span><span class="n">color</span><span class="p">,</span><span class="n">textposition</span><span class="p">,</span> <span class="n">text_vspace</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="hori.plots.PlotStates.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>state1</em>, <em>zone1</em>, <em>state2</em>, <em>zone2</em>, <em>lw=1.0</em>, <em>barrier=0</em>, <em>linestyle='-'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/plots.html#PlotStates.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.plots.PlotStates.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a dashed connector between stated positions and energies.
+Looks up the energies in the G dictionary. state1 and state2
+should be fed in as strings. zone1 and zone2 should be fed
+in as numbers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>state1</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>zone1</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; </li>
+<li><strong>state2</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>zone2</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; </li>
+<li><strong>lw</strong> (<em>float, optional</em>) &#8211; </li>
+<li><strong>barrier</strong> (<em>int, optional</em>) &#8211; </li>
+<li><strong>linestyle</strong> (<em>str, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.plots.PlotStates.plotstate">
+<code class="descname">plotstate</code><span class="sig-paren">(</span><em>state</em>, <em>zone</em>, <em>label=None</em>, <em>special_text_vspace=None</em>, <em>special_color=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/plots.html#PlotStates.plotstate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.plots.PlotStates.plotstate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a horizontal line at the specified energy state. Pulls
+the energy from the G dictionary. State should be fed in as a
+string. zone is the zone number in which to plot it. This is
+generally the total number of electrons transferred to get to
+the state. zone should be fed in as a number (probably an
+integer). By default, puts a text label of the state (number)
+on the bar, but an alternate label can be fed in via the label
+keyword.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>zone</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; </li>
+<li><strong>label</strong> (<em>string, optional</em>) &#8211; </li>
+<li><strong>special_text_vspace</strong> (<em>float, optional</em>) &#8211; </li>
+<li><strong>special_color</strong> (<em>string, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.plots.scatter_plot_from_dict">
+<code class="descclassname">hori.plots.</code><code class="descname">scatter_plot_from_dict</code><span class="sig-paren">(</span><em>ax</em>, <em>dict1</em>, <em>dict2</em>, <em>keys='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/plots.html#scatter_plot_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.plots.scatter_plot_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function designed to take two dictionaries and convert them into a
+plot, where both dictionaries have the form dict[key] = value. This
+will make a plot of the values at all points where the dictionaries
+have common keys and add them to the axis object ax.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<em>ax object</em>) &#8211; </li>
+<li><strong>dict1</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; </li>
+<li><strong>dict2</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; </li>
+<li><strong>keys</strong> (<em>list, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hori.thermo">
+<span id="hori-thermo-module"></span><h2>hori.thermo module<a class="headerlink" href="#module-hori.thermo" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hori.thermo.AdsorbateThermodynamics">
+<em class="property">class </em><code class="descclassname">hori.thermo.</code><code class="descname">AdsorbateThermodynamics</code><span class="sig-paren">(</span><em>ads_list</em>, <em>temperature</em>, <em>hbond_dict=None</em>, <em>vibrationsmode=None</em>, <em>surface=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that loads adsorbate free energy data for a list of adsorbates
+and has methods to report back thermodynamic properties of the list as
+a function of the temperature and the electronic energy (without
+needing to re-access the data stored on disk). Initialize with
+ads_list, which is a list in one of two formats. It is either a list of
+the adsorbate names, e.g.,</p>
+<blockquote>
+<div>[&#8216;CHO&#8217;, &#8216;COOH&#8217;, &#8216;CO&#8217;]</div></blockquote>
+<p>or a list of adsorbates and a vibration mode:</p>
+<blockquote>
+<div>[[&#8216;CHO&#8217;, &#8216;generic&#8217;], [&#8216;COOH&#8217;, &#8216;specific&#8217;], [&#8216;CO&#8217;, &#8216;auto&#8217;],]</div></blockquote>
+<p>where &#8216;generic&#8217; means it will calculate vibrations using the vibrations
+in the generic folder, &#8216;specific&#8217; means it will use the specific
+vibrations for that adsorbate on the specified surface (and exit with
+an error if it is missing) and &#8216;auto&#8217; means it will attempt to use
+&#8216;specific&#8217; vibrations, but will use &#8216;generic&#8217; in each instance that the
+&#8216;specific&#8217; vibration is not available. If the first input form is used,
+then the vibrations mode is set with the &#8216;vibrationsmode&#8217; keyword,
+which defaults to &#8216;auto&#8217;. For brevity the numbers 0, 1, and 2 can be
+used for &#8216;generic&#8217;, &#8216;specific&#8217;, and &#8216;auto&#8217;, respectively.</p>
+<p>The adsorbate name should be something like &#8216;COOH&#8217;. Use &#8216;&#8217; to indicate
+the clean slab. The other inputs are the temperature (in K) and a
+dictionary of hydrogen-bond stabilizations by the water overlayer, of
+the form hbond_dict[adsorbate] = float (in eV).</p>
+<p>When this class has all needed info it auto-calculates. When changing
+an electronic energy or the temperature, the class auto-recalculates,
+so a free energy can just be pulled with self.G[ads].</p>
+<p>If other properties are needed (mainly the electronic energy), they can
+be accessed in self.data[ads].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ads_list</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; </li>
+<li><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>hbond_dict</strong> (<em>dict, optional</em>) &#8211; </li>
+<li><strong>vibrationsmode</strong> (<em>string, optional</em>) &#8211; </li>
+<li><strong>surface</strong> (<em>string, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.print_thermodynamic_contributions">
+<code class="descname">print_thermodynamic_contributions</code><span class="sig-paren">(</span><em>ads_list='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.print_thermodynamic_contributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.print_thermodynamic_contributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the contributions to U,S,G for each adsorbate in ads_list
+at the current conditions.  If gas_list is &#8216;all&#8217;, then prints for
+all gases. Note that this forces a re-calculation &#8211; if any
+parameters have changed, then what is reported will be for those
+new values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ads_list</strong> (<em>list, optional</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.recalculate">
+<code class="descname">recalculate</code><span class="sig-paren">(</span><em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.recalculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.recalculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates free energy information only when things have
+changed and the data (i.e., vibrations) exist. If force is True,
+then it will recalculate everything regardless of changes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force</strong> (<em>bool, optional</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.set_electronic_energy">
+<code class="descname">set_electronic_energy</code><span class="sig-paren">(</span><em>adsorbate</em>, <em>elec_energy</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.set_electronic_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.set_electronic_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the electronic energy (eV) for the specified adsorbate and
+re-calculates G based only on that change (doesn&#8217;t trigger a global
+recalculate).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>adsorbate</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>elec_energy</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.set_energies_by_metal">
+<code class="descname">set_energies_by_metal</code><span class="sig-paren">(</span><em>metal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.set_energies_by_metal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.set_energies_by_metal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Legacy function &#8211; use set_surface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metal</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.set_surface">
+<code class="descname">set_surface</code><span class="sig-paren">(</span><em>surface</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.set_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.set_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the electronic energies, and, if specified in
+vibrequest, vibrations, for each adsorbate on the
+surface specified using the io functions of the hori module,
+assigns them, and re-calculates G.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>surface</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.AdsorbateThermodynamics.set_temperature">
+<code class="descname">set_temperature</code><span class="sig-paren">(</span><em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#AdsorbateThermodynamics.set_temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.AdsorbateThermodynamics.set_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the temperature (K) for adsorbate free energy calcs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hori.thermo.GasThermodynamics">
+<em class="property">class </em><code class="descclassname">hori.thermo.</code><code class="descname">GasThermodynamics</code><span class="sig-paren">(</span><em>gas_list</em>, <em>functional</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that loads gas chemical potential data for a list of gases,
+and has methods to report back thermodynamic properties of the list
+of gases as a function of temperature and fugacity (without needing
+to re-access the data stored on disk.</p>
+<p>Initialize with gas_list, which is a list of gases and their
+corresponding temperature and pressure (fugacity), of the form:</p>
+<blockquote>
+<div>[ [gas_name, temperature, fugacity], ... ]</div></blockquote>
+<p>After instantiating this class or changing a temperature or pressure,
+this class auto-recalculates, so a free energy can just be pulled with
+self.G[gas]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gas_list</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; </li>
+<li><strong>functional</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hori.thermo.GasThermodynamics.print_thermodynamic_contributions">
+<code class="descname">print_thermodynamic_contributions</code><span class="sig-paren">(</span><em>gas_list='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics.print_thermodynamic_contributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics.print_thermodynamic_contributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the contributions to H,S,G for each gas in gas_list at
+the current conditions.  If gas_list is &#8216;all&#8217;, then prints for all
+gases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gas_list</strong> (<em>list, optional</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.GasThermodynamics.set_all_fugacities">
+<code class="descname">set_all_fugacities</code><span class="sig-paren">(</span><em>fugacity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics.set_all_fugacities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics.set_all_fugacities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the fugacity of all gases to the same value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fugacity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.GasThermodynamics.set_all_temperatures">
+<code class="descname">set_all_temperatures</code><span class="sig-paren">(</span><em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics.set_all_temperatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics.set_all_temperatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the temperature of all gases to the same value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.GasThermodynamics.set_gas_fugacity">
+<code class="descname">set_gas_fugacity</code><span class="sig-paren">(</span><em>gas</em>, <em>fugacity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics.set_gas_fugacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics.set_gas_fugacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the fugacity of an individual gas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>gas</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>fugacity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.GasThermodynamics.set_gas_temperature">
+<code class="descname">set_gas_temperature</code><span class="sig-paren">(</span><em>gas</em>, <em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#GasThermodynamics.set_gas_temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.GasThermodynamics.set_gas_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the temperature of an individual gas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>gas</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hori.thermo.ProtonElectronThermodynamics">
+<em class="property">class </em><code class="descclassname">hori.thermo.</code><code class="descname">ProtonElectronThermodynamics</code><span class="sig-paren">(</span><em>temperature</em>, <em>voltage</em>, <em>functional</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#ProtonElectronThermodynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.ProtonElectronThermodynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that loads the chemical potential data for the proton-electron
+pair in the Computational Hydrogen Electrode model, meaning that it
+uses the thermodynamic properties of H2 gas at 1 atm and adjusts them
+for temperature and voltage. In this module, the voltage is verus RHE,
+so a pH correction is not needed.</p>
+<p>Instantiate with the temperature and voltage, and the chemical
+potential of the proton-electron pair is automatically calculated and
+stored in self.G. Similarly, after changing the temperature or
+voltage with the .set_temperature or .set_voltage method, self.G
+is auto-recalculated.</p>
+<p>Temperature is in K and voltage is in V vs RHE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>voltage</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>functional</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; exchange-correlation functional</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hori.thermo.ProtonElectronThermodynamics.set_temperature">
+<code class="descname">set_temperature</code><span class="sig-paren">(</span><em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#ProtonElectronThermodynamics.set_temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.ProtonElectronThermodynamics.set_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the temperature (K).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hori.thermo.ProtonElectronThermodynamics.set_voltage">
+<code class="descname">set_voltage</code><span class="sig-paren">(</span><em>voltage</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#ProtonElectronThermodynamics.set_voltage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.ProtonElectronThermodynamics.set_voltage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the potential (V vs RHE).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="hori.thermo.gas_chemical_potential">
+<code class="descclassname">hori.thermo.</code><code class="descname">gas_chemical_potential</code><span class="sig-paren">(</span><em>species</em>, <em>temperature</em>, <em>fugacity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hori/thermo.html#gas_chemical_potential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hori.thermo.gas_chemical_potential" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a gas, given its temperature (K) and fugacity (Pa), returns
+its chemical potential.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>species</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
+<li><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+<li><strong>fugacity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Hori" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      Last updated on Jul 24, 2016.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

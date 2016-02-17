@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hori.plots &mdash; hori  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="hori  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> hori
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_dynamic/hori.html">Source documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">hori</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hori.plots</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hori.plots</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">UnivariateSpline</span>
+
+
+<div class="viewcode-block" id="scatter_plot_from_dict"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.plots.scatter_plot_from_dict">[docs]</a><span class="k">def</span> <span class="nf">scatter_plot_from_dict</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">dict1</span><span class="p">,</span> <span class="n">dict2</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function designed to take two dictionaries and convert them into a</span>
+<span class="sd">    plot, where both dictionaries have the form dict[key] = value. This</span>
+<span class="sd">    will make a plot of the values at all points where the dictionaries</span>
+<span class="sd">    have common keys and add them to the axis object ax.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (ax object)</span>
+<span class="sd">        dict1 (dict)</span>
+<span class="sd">        dict2 (dict)</span>
+<span class="sd">        keys (list, optional)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">keys</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">keys1</span> <span class="o">=</span> <span class="n">dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">keys2</span> <span class="o">=</span> <span class="n">dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">testkeys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">keys1</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">keys2</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">testkey</span> <span class="ow">in</span> <span class="n">testkeys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">testkey</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dict2</span><span class="p">[</span><span class="n">testkey</span><span class="p">]):</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">testkey</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict2</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dict2</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlotStates"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.plots.PlotStates">[docs]</a><span class="k">class</span> <span class="nc">PlotStates</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Functions to update existing plots with energy levels and connectors.</span>
+<span class="sd">    Initialize as</span>
+
+<span class="sd">    ..  code-block:: python</span>
+
+<span class="sd">        PlotStates(ax,G,halfwidth,textwidth,fontsize,color,textposition, text_vspace)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">halfwidth</span><span class="p">,</span> <span class="n">textwidth</span><span class="p">,</span> <span class="n">fontsize</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span>
+                 <span class="n">textcolor</span><span class="p">,</span> <span class="n">dashcolor</span><span class="p">,</span> <span class="n">textposition</span><span class="o">=</span><span class="s1">&#39;inline&#39;</span><span class="p">,</span> <span class="n">text_vspace</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax (ax object)</span>
+<span class="sd">            G (dict): free energy dictionary, G[state] = value</span>
+<span class="sd">            halfwidth (int): half of the width the plot the horizontal bars.</span>
+<span class="sd">            textwidth (int): the amount of space to leave for the text labels.</span>
+<span class="sd">            fontsize (int): the fontsize for the text labels</span>
+<span class="sd">            color (string)</span>
+<span class="sd">            textcolor (string)</span>
+<span class="sd">            dashcolor (string)</span>
+<span class="sd">            textposition (str, optional)</span>
+<span class="sd">            text_vspace (float, optional)</span>
+<span class="sd">            lw (float, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_G</span> <span class="o">=</span> <span class="n">G</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span> <span class="o">=</span> <span class="n">halfwidth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_textwidth</span> <span class="o">=</span> <span class="n">textwidth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fontsize</span> <span class="o">=</span> <span class="n">fontsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dashcolor</span> <span class="o">=</span> <span class="n">dashcolor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_textcolor</span> <span class="o">=</span> <span class="n">textcolor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_textposition</span> <span class="o">=</span> <span class="n">textposition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text_vspace</span> <span class="o">=</span> <span class="n">text_vspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lw</span> <span class="o">=</span> <span class="n">lw</span>
+
+<div class="viewcode-block" id="PlotStates.plotstate"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.plots.PlotStates.plotstate">[docs]</a>    <span class="k">def</span> <span class="nf">plotstate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">special_text_vspace</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">special_color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a horizontal line at the specified energy state. Pulls </span>
+<span class="sd">        the energy from the G dictionary. State should be fed in as a </span>
+<span class="sd">        string. zone is the zone number in which to plot it. This is</span>
+<span class="sd">        generally the total number of electrons transferred to get to </span>
+<span class="sd">        the state. zone should be fed in as a number (probably an</span>
+<span class="sd">        integer). By default, puts a text label of the state (number)</span>
+<span class="sd">        on the bar, but an alternate label can be fed in via the label</span>
+<span class="sd">        keyword.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (string)</span>
+<span class="sd">            zone (int)</span>
+<span class="sd">            label (string, optional)</span>
+<span class="sd">            special_text_vspace (float, optional)</span>
+<span class="sd">            special_color (string, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">if</span> <span class="n">special_text_vspace</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">special_text_vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_vspace</span>
+        <span class="k">if</span> <span class="n">special_color</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">special_color</span>
+            <span class="n">textcolor</span> <span class="o">=</span> <span class="n">special_color</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color</span>
+            <span class="n">textcolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textcolor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">zone</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">,</span> <span class="n">zone</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textwidth</span><span class="p">),</span>
+                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">]),</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">zone</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textwidth</span><span class="p">,</span> <span class="n">zone</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">),</span>
+                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">]),</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textposition</span> <span class="o">==</span> <span class="s1">&#39;inline&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="n">label</span><span class="p">,</span>
+                         <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fontsize</span><span class="p">,</span>
+                         <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                         <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="n">textcolor</span><span class="p">,</span>
+                         <span class="n">backgroundcolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textposition</span> <span class="o">==</span> <span class="s1">&#39;above&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">+</span> <span class="n">special_text_vspace</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span>
+                         <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fontsize</span><span class="p">,</span>
+                         <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                         <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="n">textcolor</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_textposition</span> <span class="o">==</span> <span class="s1">&#39;slant&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">zone</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">+</span> <span class="n">special_text_vspace</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span>
+                         <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fontsize</span><span class="p">,</span>
+                         <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+                         <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="n">textcolor</span><span class="p">,</span>
+                         <span class="n">rotation</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotStates.connect"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.plots.PlotStates.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state1</span><span class="p">,</span> <span class="n">zone1</span><span class="p">,</span> <span class="n">state2</span><span class="p">,</span> <span class="n">zone2</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">barrier</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Draws a dashed connector between stated positions and energies.</span>
+<span class="sd">        Looks up the energies in the G dictionary. state1 and state2</span>
+<span class="sd">        should be fed in as strings. zone1 and zone2 should be fed</span>
+<span class="sd">        in as numbers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state1 (string)</span>
+<span class="sd">            zone1 (int)</span>
+<span class="sd">            state2 (string)</span>
+<span class="sd">            zone2 (int)</span>
+<span class="sd">            lw (float, optional)</span>
+<span class="sd">            barrier (int, optional)</span>
+<span class="sd">            linestyle (str, optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">barrier</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="n">zone1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">,</span> <span class="n">zone2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">),</span>
+                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state2</span><span class="p">]),</span>
+                         <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dashcolor</span><span class="p">,</span>
+                         <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
+                         <span class="c1"># dashes=(2,2),</span>
+                         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">barrier</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">zone1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">zone1</span> <span class="o">+</span> <span class="n">zone2</span><span class="p">),</span> <span class="n">zone2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">]),</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state1</span><span class="p">]</span> <span class="o">+</span> <span class="n">barrier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">[</span><span class="n">state2</span><span class="p">]]),</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">zone1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">,</span> <span class="n">zone2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_halfwidth</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      Last updated on Jul 24, 2016.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

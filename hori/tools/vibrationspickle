@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+"""Command line function to make a pickled dictionary summarizing the
+output of an energy calculation. This script should only be run from within
+the directory where the simulation was run (it copies path info from the
+working directory)."""
+
+import os
+from optparse import OptionParser
+import pickle
+from ase.io import read
+from ase.vibrations import Vibrations
+from getpass import getuser
+
+# Parse arguments. ######################################
+parser = OptionParser(usage='usage: %prog [options] destination')
+parser.add_option('-f',dest='input_file',
+                  help='script used to generate the vibrations, uses whatever *.py file is in the current directory if not specified, or none if "none" ')
+parser.add_option('-t',dest='traj_file',
+                  help='ASE atoms trajectory file, defaults to a *.traj'
+                  ' file that does not begin with "vib"')
+parser.add_option('-a',dest='author',default=getuser(),
+                  help='person who produced the results, default=%default')
+parser.add_option('-r',dest='remark',default=None,
+                  help='flag to raise to user when file is opened')
+(options,args) = parser.parse_args()
+if len(args) != 1:
+    parser.error('incorrect number of arguments')
+
+# Functions. #############################################
+def find_vibrations(traj_file,vib_indices):
+    """Opens the trajectory file and gets the vibrations in eV."""
+    atoms = read(traj_file)
+    vib = Vibrations(atoms,indices=vib_indices)
+    vib_energies = vib.get_energies()
+    return vib_energies
+
+
+# Make dictionary. ########################################
+d = {}
+# Author.
+d['author'] = options.author
+# Calculation script.
+if options.input_file:
+    if options.input_file == 'none':
+        d['calculation script'] = None
+    else:
+        f = open(options.input_file,'r')
+        d['calculation script'] = f.read()
+        f.close()
+else:
+    files = [file for file in os.listdir(os.curdir) if file[-3:]=='.py']
+    if len(files) != 1:
+        raise RuntimeError('More than one *.py file. INPUT_FILE must be '
+                           'specified with the -f flag.')
+    f = open(files[0],'r')
+    d['calculation script'] = f.read()
+    f.close()
+# Path.
+d['path'] = os.getcwd()
+# Remark
+d['remark'] = options.remark
+
+# Trajectory file
+if options.traj_file:
+    traj_file = options.traj_file
+else:
+    files = [f for f in os.listdir(os.curdir) if 
+             f[-5:]=='.traj' and f[:3] != 'vib']
+    if len(files) != 1:
+        raise RuntimeError('Multiple .traj files found for TRAJ_FILE (that'
+                           ' do not begin with vib). Specify one with the '
+                           '-t flag.')
+    traj_file = files[0]
+
+# Vibrations.
+vib_indices = [eval(f.split('.')[1][:-2]) for f in os.listdir(os.curdir) 
+         if 'x-.pckl' in f]
+d['vibrations'] = find_vibrations(traj_file,vib_indices)
+
+
+# Pickle dictionary, making sure the file isn't overwritten.
+outfile = args[0]
+if os.path.isfile(outfile):
+    raise RuntimeError('File "%s" exists. This script does not clobber.'%
+                       outfile)
+f = open(outfile,'w')
+pickle.dump(d,f)
+f.close()
+
