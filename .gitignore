@@ -4,7 +4,6 @@ output
 *.pyc
 *.egg-info
 !/.gitignore
-docs/source/_dynamic/
 build/
 dist/
 RELEASE-VERSION
