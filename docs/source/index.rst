@@ -14,14 +14,22 @@ ____________
     python setup.py install
 
 
+<<<<<<< HEAD
 Contents
 ________
+=======
+>>>>>>> 66c6a1a... Add setup.py and docs, reformat docstrings in accordance with PEP8.
 .. toctree::
    :maxdepth: 2
 
    Source documentation <_dynamic/hori>
 
+<<<<<<< HEAD
 
 * :ref:`genindex`
 * :ref:`modindex`
 
+=======
+:ref:`modindex`
+---------------
+>>>>>>> 66c6a1a... Add setup.py and docs, reformat docstrings in accordance with PEP8.
