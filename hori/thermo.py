@@ -486,7 +486,7 @@ class GasThermodynamics:
 
     def set_gas_temperature(self, gas, temperature):
         """Change the temperature of an individual gas.
-        
+
         Args:
             gas (string)
             temperature (float)
@@ -496,7 +496,7 @@ class GasThermodynamics:
 
     def set_gas_fugacity(self, gas, fugacity):
         """Change the fugacity of an individual gas.
-        
+
         Args:
             gas (string)
             fugacity (float)
@@ -506,7 +506,7 @@ class GasThermodynamics:
 
     def set_all_temperatures(self, temperature):
         """Set the temperature of all gases to the same value.
-        
+
         Args:
             temperature (float)
         """
@@ -516,7 +516,7 @@ class GasThermodynamics:
 
     def set_all_fugacities(self, fugacity):
         """Set the fugacity of all gases to the same value.
-        
+
         Args:
             fugacity (float)
         """
@@ -528,7 +528,7 @@ class GasThermodynamics:
         """Prints the contributions to H,S,G for each gas in gas_list at
         the current conditions.  If gas_list is 'all', then prints for all 
         gases.
-        
+
         Args:
             gas_list (list, optional)
         """

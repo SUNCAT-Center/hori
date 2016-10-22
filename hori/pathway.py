@@ -43,7 +43,7 @@ class Pathway:
         where the <>'s are left off the chemical formula. The info is
 
         sanity checked and added to an internal list of the form:
-        
+
         .. code-block:: python
 
             [ [firststate,secondstate,reaction], ... ]
