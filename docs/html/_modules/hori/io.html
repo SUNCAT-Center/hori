@@ -133,7 +133,8 @@
 <span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Atoms</span>
 
 <span class="kn">from</span> <span class="nn">hori</span> <span class="kn">import</span> <span class="n">__path__</span> <span class="k">as</span> <span class="n">horipath</span>
-<span class="n">datapath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">horipath</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+<span class="n">datapath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">horipath</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="set_directory"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.set_directory">[docs]</a><span class="k">def</span> <span class="nf">set_directory</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Use to set a directory of pickle files other than the current. The</span>
@@ -143,28 +144,31 @@
     <span class="k">global</span> <span class="n">datapath</span>
     <span class="n">datapath</span> <span class="o">=</span> <span class="n">path</span></div>
 
+
 <div class="viewcode-block" id="get_directory"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.get_directory">[docs]</a><span class="k">def</span> <span class="nf">get_directory</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Returns the internal value of datapath.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">datapath</span></div>
+
 
 <div class="viewcode-block" id="electronicenergy"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.electronicenergy">[docs]</a><span class="k">def</span> <span class="nf">electronicenergy</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads in the electronic energy from the calculated data set. If the</span>
 <span class="sd">    adsorbate is None or &#39;&#39;, then returns the energy of the clean slab,</span>
 <span class="sd">    if the energy doesn&#39;t exist in the data set, then returns nan. Alerts</span>
 <span class="sd">    the user to this fact if verbose=True.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="n">adsorbate</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">adsorbate</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">adsorbate</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">adsorbate</span><span class="p">,</span><span class="n">surface</span><span class="p">])</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">surface</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">surface</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span><span class="s1">&#39;electronic-energies&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;electronic-energies&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;remark&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Message from pickle </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> 
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Message from pickle </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
                       <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]))</span>
         <span class="n">energy</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;electronic energy&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -174,10 +178,11 @@
         <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="k">return</span> <span class="n">energy</span></div>
 
+
 <div class="viewcode-block" id="gasdata"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.gasdata">[docs]</a><span class="k">def</span> <span class="nf">gasdata</span><span class="p">(</span><span class="n">species</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads in the electronic energy and vibrations from the calculated</span>
 <span class="sd">    data set.&quot;&quot;&quot;</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span><span class="s1">&#39;electronic-energies&#39;</span><span class="p">,</span><span class="n">species</span><span class="p">))</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;electronic-energies&#39;</span><span class="p">,</span> <span class="n">species</span><span class="p">))</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;remark&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]:</span>
@@ -190,6 +195,7 @@
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atomsfromlist</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;atomslist&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">d</span></div>
 
+
 <div class="viewcode-block" id="atomsfromlist"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.atomsfromlist">[docs]</a><span class="k">def</span> <span class="nf">atomsfromlist</span><span class="p">(</span><span class="n">atomslist</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Takes in a list of atomic symbols and coordinates, as in </span>
 <span class="sd">    [atom1, atom2, ...] where atomX = (symbol, (x,y,z)), and symbol is the</span>
@@ -200,9 +206,10 @@
         <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">atom</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">atoms</span></div>
 
+
 <div class="viewcode-block" id="genericvibrations"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.genericvibrations">[docs]</a><span class="k">def</span> <span class="nf">genericvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads in the generic vibrations used for adsorbates in general.&quot;&quot;&quot;</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span><span class="s1">&#39;generic-vibrations&#39;</span><span class="p">,</span><span class="n">adsorbate</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;generic-vibrations&#39;</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;remark&#39;</span><span class="p">):</span>
@@ -215,6 +222,7 @@
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;WARNING: Imaginary frequencies encountered for </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span>
               <span class="n">adsorbate</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vib_energies</span></div>
+
 
 <div class="viewcode-block" id="specificvibrations"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.specificvibrations">[docs]</a><span class="k">def</span> <span class="nf">specificvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">surface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads in the vibrations for an adsorbate on a specific surface.&quot;&quot;&quot;</span>
@@ -231,11 +239,11 @@
         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]:</span>
             <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Message from pickle </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]))</span>
     <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;vibrations&#39;</span><span class="p">):</span>
-	<span class="n">realvibs</span><span class="o">=</span><span class="p">[]</span>
-    	<span class="k">for</span> <span class="n">vib</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">]:</span>
-        	<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            		<span class="n">realvibs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)))</span>
-    	<span class="n">vib_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">realvibs</span><span class="p">)</span>
+        <span class="n">realvibs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">vib</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">realvibs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)))</span>
+        <span class="n">vib_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">realvibs</span><span class="p">)</span>
         <span class="c1">#vib_energies = d[&#39;vibrations&#39;]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;No vibrations for </span><span class="si">%s</span><span class="s1"> on </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span>
@@ -246,19 +254,20 @@
               <span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">surface</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">vib_energies</span></div>
 
+
 <div class="viewcode-block" id="ignoreimaginaryvibrations"><a class="viewcode-back" href="../../_dynamic/hori.html#hori.io.ignoreimaginaryvibrations">[docs]</a><span class="k">def</span> <span class="nf">ignoreimaginaryvibrations</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads in the generic vibrations used for adsorbates in general.</span>
 <span class="sd">    Calculates only real part.&quot;&quot;&quot;</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span><span class="s1">&#39;generic-vibrations&#39;</span><span class="p">,</span><span class="n">adsorbate</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;generic-vibrations&#39;</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;remark&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]:</span>
             <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Message from pickle </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;remark&#39;</span><span class="p">]))</span>
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">realvibs</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">realvibs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">vib</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;vibrations&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">realvibs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">vib</span><span class="p">)))</span>
     <span class="n">vib_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">realvibs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vib_energies</span>
@@ -266,8 +275,6 @@
     <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iscomplex</span><span class="p">(</span><span class="n">vib_energies</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;WARNING: Imaginary frequencies encountered for </span><span class="si">%s</span><span class="s1"> on </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span>
               <span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">surface</span><span class="p">))</span></div>
-
-    
 </pre></div>
 
            </div>
@@ -279,15 +286,7 @@
 
   <div role="contentinfo">
     <p>
-<<<<<<< HEAD
-<<<<<<< HEAD
-      Last updated on Jul 24, 2016.
-=======
-      Last updated on Jul 23, 2016.
->>>>>>> 66c6a1a... Add setup.py and docs, reformat docstrings in accordance with PEP8.
-=======
-      Last updated on Jul 24, 2016.
->>>>>>> e6ac45a... Updated docs to work with readthedocs
+      Last updated on Nov 06, 2016.
 
     </p>
   </div> 
