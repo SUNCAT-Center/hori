@@ -13,34 +13,16 @@ ____________
 
     python setup.py install
 
+Contents
+________
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-Contents
-________
-=======
->>>>>>> 66c6a1a... Add setup.py and docs, reformat docstrings in accordance with PEP8.
-=======
-Contents
-________
->>>>>>> e6ac45a... Updated docs to work with readthedocs
 .. toctree::
    :maxdepth: 2
 
    Source documentation <_dynamic/hori>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e6ac45a... Updated docs to work with readthedocs
+:ref:`genindex`
+---------------
 
-* :ref:`genindex`
-* :ref:`modindex`
-
-<<<<<<< HEAD
-=======
 :ref:`modindex`
 ---------------
->>>>>>> 66c6a1a... Add setup.py and docs, reformat docstrings in accordance with PEP8.
-=======
->>>>>>> e6ac45a... Updated docs to work with readthedocs
